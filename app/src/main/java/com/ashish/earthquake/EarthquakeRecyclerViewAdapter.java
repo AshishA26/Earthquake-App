@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.ashish.earthquake.databinding.ListItemEarthquakeBinding;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -27,19 +29,16 @@ public class EarthquakeRecyclerViewAdapter extends
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.list_item_earthquake,
-                        parent, false);
-        return new ViewHolder(view);
+        ListItemEarthquakeBinding binding = ListItemEarthquakeBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Earthquake earthquake = mEarthquakes.get(position);
-        holder.date.setText(TIME_FORMAT.format(earthquake.getDate()));
-        holder.details.setText(earthquake.getDetails());
-        holder.magnitude.setText(
-                MAGNITUDE_FORMAT.format(earthquake.getMagnitude()));
+        holder.binding.setEarthquake(earthquake);
+        holder.binding.executePendingBindings();
     }
 
     @Override
@@ -48,18 +47,12 @@ public class EarthquakeRecyclerViewAdapter extends
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public final TextView date;
-        public final TextView details;
-        public final TextView magnitude;
-
-        public ViewHolder(View view) {
-            super(view);
-            date = (TextView) view.findViewById(R.id.date);
-            details = (TextView) view.findViewById(R.id.details);
-            magnitude = (TextView) view.findViewById(R.id.magnitude);
+        public final ListItemEarthquakeBinding binding;
+        public ViewHolder(ListItemEarthquakeBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+            binding.setTimeformat(TIME_FORMAT);
+            binding.setMagnitudeformat(MAGNITUDE_FORMAT);
         }
-
-    @Override
-    public String toString() { return super.toString() + " '" + details.getText() + "'"; }
     }
 }
